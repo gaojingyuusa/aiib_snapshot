@@ -19,6 +19,7 @@ library(zoo)
 library(plyr)
 library(WDI)
 library(tidyr)
+library(lazyeval)
 source("functions.R",local=F)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -28,7 +29,7 @@ shinyUI(fluidPage(
         fluidRow(
             
             column(6,
-                   h1(" "),
+#                   h1(" "),
                    img(src="aiib_logo.png", height="100")
                    
             ),
@@ -46,18 +47,23 @@ shinyUI(fluidPage(
             
             # Indicator responsive to database selection
             selectInput("ind","Indicator",
-                        choices=wdi_name,"GDP (current US$)", multiple = T),
+                        choices=wdi_name,"GDP (current US$)", multiple = F),
             # Year responsive to indicator selection
-            selectInput("year","Year",choices=seq(1990, 2019,1)),
+            selectInput("year","Year",choices=seq(1990, 2019,1),selected=2015),
             
             # Groups not responsive to any of above indicator selections
-            selectInput("group","Groups",choices=c("AIIB Members","AIIB Regional Members","AIIB Non-Regional Members"))
+            selectInput("group","Groups",choices=c("AIIB Members","AIIB Regional Members","AIIB Non-Regional Members")),
+            
+            selectInput("metrics","Metrics",choices=c("Total","Average"), selected="Total")
             
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("distPlot")
+            tableOutput("world_total"),
+            tableOutput("aiib_metrics"),
+            tableOutput("aiib_table")
+           
         )
     )
 ))
