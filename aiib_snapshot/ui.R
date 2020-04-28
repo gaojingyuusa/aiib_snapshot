@@ -19,7 +19,7 @@ library(zoo)
 library(plyr)
 library(WDI)
 library(tidyr)
-
+source("functions.R",local=F)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
 
