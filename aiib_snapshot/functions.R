@@ -38,3 +38,9 @@ WDI_rename <- function(name){
 }
 
 #WDI_clean(country = aiib$iso, indicator = "SP.POP.65UP.TO.ZS", start=2015, end=2015)
+
+#world_ts <- WDI_clean(country = "WLD", indicator = "SP.POP.65UP.TO.ZS", NULL, NULL)[,1:3]
+#colnames(world_ts)[1] <- "status"
+#test <- WDI_clean(country = aiib$iso, indicator = "SP.POP.65UP.TO.ZS",start=NULL, end=NULL) %>% merge(aiib,by.x="iso3c",by.y="iso") 
+#test_ <- aggregate(value ~ status + time,data=test,mean) %>% rbind(world_ts) 
+#ggplot(test_ %>% filter(status=="regional"),aes(x=time, y=value))+geom_bar()

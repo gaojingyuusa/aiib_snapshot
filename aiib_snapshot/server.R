@@ -8,6 +8,8 @@
 #
 
 library(shiny)
+library(plotly)
+library(shinycustomloader)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -21,5 +23,14 @@ shinyServer(function(input, output) {
     })
     output$aiib_metrics <- renderTable({
         aiib_metrics()
+    })
+    output$aiib_result_fig <- renderPlotly({
+        aiib_result_fig()
+    })
+    output$aiib_metrics_ts <- renderTable({
+        aiib_metrics_ts()
+    })
+    output$test_fg <- renderPlotly({
+        test_fg()
     })
 })
