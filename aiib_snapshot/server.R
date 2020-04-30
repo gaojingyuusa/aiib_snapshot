@@ -18,8 +18,14 @@ shinyServer(function(input, output) {
     output$world_total <- renderTable({
         world_total()
     })
-    output$aiib_table <- renderTable({
-        aiib_table()
+    output$aiib_table <- renderFormattable({
+        aiib_table() %>% select(-iso3c,-time) %>% arrange(desc(value)) %>% formattable(align = c("l","r","l"),
+            list(value=color_bar("#FF8C78"),
+                 status = formatter("span",
+                                        style = x ~ style(color = ifelse(x=="regional",  "#8F1305", "#CCAD37")),
+                                        x ~ icontext(ifelse(x=="regional", "", ""), ifelse(x=="regional", "Regional", "Non-regional")))
+                 )
+        )
     })
     output$aiib_metrics <- renderTable({
         aiib_metrics()
@@ -30,7 +36,7 @@ shinyServer(function(input, output) {
     output$aiib_metrics_ts <- renderTable({
         aiib_metrics_ts()
     })
-    output$test_fg <- renderPlotly({
-        test_fg()
+    output$fg <- renderPlotly({
+        fg()
     })
 })

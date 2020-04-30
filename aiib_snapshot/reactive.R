@@ -1,5 +1,13 @@
 # This script is used to store all reactive variables created for AIIB snapshot
 
+## Chart styles
+
+#font
+font_t <- list(
+  family = "arial",
+  size = 12,
+  color = "black")
+
 
 ## Data and Figures at One Time Point
 # World summary: either average or total
@@ -9,7 +17,9 @@ world_total <- reactive({
 
 # AIIB data: datapoints for AIIB members
 aiib_table <- reactive({
-  WDI_clean(country = aiib$iso, indicator = WDI_rename(input$ind),start=input$year, end=input$year) %>% merge(aiib,by.x="iso3c",by.y="iso")
+  aiib_table_econ <- WDI_clean(country = aiib$iso, indicator = WDI_rename(input$ind),start=input$year, end=input$year) %>% merge(aiib,by.x="iso3c",by.y="iso") 
+  colnames(aiib_table_econ)[2] <- "economy"
+  aiib_table_econ
 })
 
 # AIIB data results: comparing the AIIB - Regional vs Non-Regional vs Rest of the World
@@ -31,20 +41,35 @@ aiib_metrics <- reactive({
 
 aiib_result_fig <- reactive({
   if(input$metrics=="Total"){
-    aiib_metrics() %>% plot_ly(label =~status, values=~value, marker=list(colors=c("#CCAD37","#8F1305","grey"))) %>% add_pie(hole=0.6) %>% 
-    layout(title=paste0("Value in: ",input$year),showlegend = F, 
+    aiib_metrics() %>% mutate(pie_label=CapStr(status)) %>% plot_ly(label =~status, values=~value, text=c("Non-regional","Regional","Rest of the World"),
+                                                                    hovertemplate = "%{text}: <br>Value: %{value} </br>", 
+                                                                    marker=list(colors=c("#CCAD37","#8F1305","grey"))) %>% 
+    add_pie(hole=0.6) %>% 
+    layout(
+      margin=list(t=0,b=0,l=0,r=0),
+      #title=paste0("Share of World Total in: ",input$year),showlegend = F, font=font_t, 
+      showlegend = F,
            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   } else {
-    aiib_metrics() %>% plot_ly(
+    aiib_metrics() %>% mutate(bar_label=CapStr(status)) %>% plot_ly(
       x = ~status,
       y = ~value,
-      marker=list(colors=c("#CCAD37","#8F1305","grey")),
-      name = "AIIB VS Rest of the World",
+      marker=list(color=c("#CCAD37","#8F1305","grey")),
       type = "bar",
-      text = ~value %>% as.numeric() %>% round(2)
+      text = ~value %>% as.numeric() %>% round(2),
+      hovertemplate = "%{x} <br>Value: %{text} </br>"
     ) %>% 
-      layout(title=paste0("Value in: ",input$year),showlegend = F)
+      layout(
+      margin=list(t=30,b=0,l=0,r=0),
+      #title=paste0("Value in: ",input$year),showlegend = F, font=font_t, 
+      xaxis = list(
+        title = "", showticklabels=F
+      ),
+      yaxis = list(
+        title = ""
+      )
+             )
   }
 })
 
@@ -71,15 +96,16 @@ aiib_metrics_ts <- reactive({
   }
 })
 
-test_fg <- reactive({
+fg <- reactive({
   
   fig <- plot_ly(aiib_metrics_ts(), x = ~time) %>% 
-    add_trace(y = aiib_metrics_ts()[,2] , type = 'scatter', mode = 'lines', line = list(color = '#CCAD37', width = 2, name="Non-Regional")) %>%
+    add_trace(y = aiib_metrics_ts()[,2] , type = 'scatter', mode = 'lines', line = list(color = '#CCAD37', width = 2), name="Non-Regional") %>%
     add_trace(y = ~regional, type = 'scatter', mode = 'lines', line = list(color = '#8F1305', width = 4), name="Regional") %>%
     add_trace(y = ~World, type = 'scatter', mode = 'lines', line = list(color = 'grey', width = 2), name="World")
   
   fig <- fig %>% layout(
-    title = "Historical Values", 
+    margin=list(t=30,b=0,l=0,r=0),
+ #   title = "Historical Values",font=font_t,
     showlegend = F,
     xaxis = list(
       title = ""
