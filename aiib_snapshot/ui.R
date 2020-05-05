@@ -30,7 +30,7 @@ shinyUI(fluidPage(
     # Style options
     tags$style(HTML("
     .tabbable > .nav > li > a[data-value='Charts'] {background-color: #8f1305;  color:white}
-    .tabbable > .nav > li > a[data-value='Table'] {background-color: #ccad37;   color:white}
+    .tabbable > .nav > li > a[data-value='FAQ'] {background-color: #ccad37;   color:white}
     ")),
     
     # Application title
@@ -75,8 +75,20 @@ shinyUI(fluidPage(
             selectInput("metrics",
                         shiny::HTML("<p><span style='color: white;font-size:16px'>Metrics</span></p>"),
                         choices=c("Total","Average"), selected="Total"),
+    
+            selectInput("groups",
+                        shiny::HTML("<p><span style='color: white;font-size:16px'>Other Groups</span></p>"),
+                        choices=c("Asian Regions","WBG Income Levels","WBG Regions"), selected="WBG Income Levels"),
             
             h1(" "),
+            h4(strong("AIIB Membership Status"),style="color:white"),
+            h4("Red = AIIB Regional Members. Yellow = AIIB Non-regional Members",style="color:white"),
+    
+            h1(" "),
+            
+           
+            plotlyOutput("aiib_map"),
+            h4(" "),
             h4("Developed by the Economics Unit of the Asian Infrastructure Investment Bank.",style="color:white"),
             width = 3
             
@@ -91,10 +103,11 @@ shinyUI(fluidPage(
             
             h1(" "),
             h2(strong("Welcome to AIIBasics!"),style="color:#8F1305"),
+            h4(strong(textOutput("indicator_select"))),
    
             fluidRow(
               column(3,
-                     h4(strong("Share by AIIB and World"))
+                     h4(strong("AIIB and World"))
                      ),
               column(4,
                      h4(strong("Historical Values"))
@@ -107,15 +120,15 @@ shinyUI(fluidPage(
             
             fluidRow(
               column(3,
-                    downloadButton("dl_share","Download Data Sources", class="butt1",
+                    downloadButton("dl_share","Download Data", class="butt1",
                                    tags$head(tags$style(".butt1{background-color:#8f1305;color:white;}")))
               ),
               column(4,
-                     downloadButton("dl_table","Download Data Sources", class="butt1",
+                     downloadButton("dl_historical","Download Data", class="butt1",
                                     tags$head(tags$style(".butt1{background-color:#8f1305;color:white;}")))
               ),
               column(5,
-                     downloadButton("dl_historical","Download Data Sources", class="butt1",
+                     downloadButton("dl_table","Download Data", class="butt1",
                                     tags$head(tags$style(".butt1{background-color:#8f1305;color:white;}")))
               )
               
@@ -124,10 +137,20 @@ shinyUI(fluidPage(
             
             fluidRow(
                 column(3,
-                       withLoader(plotlyOutput("aiib_result_fig"), type="image",loader="aiib_spinner.gif")
+                       withLoader(plotlyOutput("aiib_result_fig"), type="image",loader="aiib_spinner.gif"),
+                       h4(" "),
+                       h4(strong(textOutput("groups_select"))),
+                       downloadButton("dl_share_groups","Download Data", class="butt2",
+                                      tags$head(tags$style(".butt2{background-color:#002244;color:white;}"))),
+                       withLoader(plotlyOutput("fig_other_groups_result"), type="image",loader="aiib_spinner.gif")
                        ),
                 column(4,
-                       withLoader(plotlyOutput("fg"), type="image", loader="aiib_spinner.gif")
+                       withLoader(plotlyOutput("fg"), type="image", loader="aiib_spinner.gif"),
+                       h4(" "),
+                       h4(strong("Historical Values")),
+                       downloadButton("dl_share_groups_ts","Download Data", class="butt2",
+                                      tags$head(tags$style(".butt2{background-color:#002244;color:white;}"))),
+                       withLoader(plotlyOutput("fig_other_groups_ts"), type="image",loader="aiib_spinner.gif")
                        ),
                 column(5,
                        formattableOutput("aiib_table")
@@ -137,11 +160,9 @@ shinyUI(fluidPage(
                   ),
           
           
-          tabPanel("Table",
-            tableOutput("world_total"),
-            tableOutput("aiib_metrics"),
-     #       plotlyOutput("aiib_result_fig"),
-            tableOutput("aiib_metrics_ts"),
+          tabPanel("FAQ",
+            h4(" "),
+            h4("Please contact Jingyu Gao via jingyu.gao@aiib.org for technical assistance regarding this website.")
             
           )
                      )

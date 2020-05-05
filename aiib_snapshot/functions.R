@@ -17,6 +17,12 @@ library(dplyr)
 
 # import aiib identifiers
 aiib <- read.csv("aiib_members.csv",stringsAsFactors = F)[,2:3]
+aiib_map <- read.csv("aiib_members.csv",stringsAsFactors = F)
+colnames(aiib_map)[1] <- "country"
+# import asia region identifiers
+asia <- read.csv("asia_region_un.csv",stringsAsFactors = F)
+colnames(asia)[1] <- "iso3c"
+asia <- unique(asia)
 
 # import wdi indicator list
 wdi <- read.csv("wdi_list.csv",stringsAsFactors = F) %>% unique()
